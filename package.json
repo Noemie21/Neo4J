@@ -1,0 +1,10 @@
+{
+    "name": "burger",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "dependencies": {
+        "express": "^4.17.2",
+        "neo4j-driver": "^4.4.2"
+    }
+}

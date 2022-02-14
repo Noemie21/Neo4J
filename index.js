@@ -1,18 +1,53 @@
 //Load HTTP module
-const http = require("http");
-const hostname = '127.0.0.1';
-const port = 4400;
 
-//Create HTTP server and listen on port 3000 for requests
-const server = http.createServer((req, res) => {
+const express = require('express')
+const app = express();
 
-  //Set the response HTTP header with HTTP status and Content type
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello World\n');
-});
+const neo4j = require('neo4j-driver')
+/*const driver = neo4j.driver(
+    "neo4j://471af878.production-orch-0055.neo4j.io:7687", 
+    neo4j.auth.basic("neo4j", "QTxR81zH_zOB-o0_u1kd6xizciwtSHJXYy1lVa9o8-k"), { encrypted: 'ENCRYPTION_ON' }
+    )
+*/
+const driver = neo4j.driver(
+    "bolt://localhost:7687", 
+    neo4j.auth.basic("neo4j", "admin123")
+    )
+const session = driver.session()
 
-//listen for request on port 3000, and as a callback function have the port listened on logged
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+app.get('/list', async (req,res) => {
+    session
+    .run(
+        'MATCH (n:Task) RETURN n.name',
+      )
+    .then(result => {
+        res.json({status: 200, data: {result}})
+    })  
+})
+
+
+
+
+/*
+app.post('/auth', async (req, res) => {
+
+    let user = await User.findOne({where: {  
+        username: req.body.username,
+        password: sha512.sha512(req.body.password)
+    }})
+  
+    let token = jwt.sign({ id: user.id }, 'ThisIsMySecretSentence1234');
+  
+    res.json({status: 200, data: token})
+  
+})
+
+app.get('/parkings/:id', (req,res) => {
+    const id = parseInt(req.params.id)
+    const parking = parkings.find(parking => parking.id === id)
+    res.status(200).json(parking)
+})
+*/
+driver.close()
+
+app.listen(4400);
