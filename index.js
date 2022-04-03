@@ -4,23 +4,25 @@ const express = require('express')
 const app = express();
 
 const neo4j = require('neo4j-driver')
-/*const driver = neo4j.driver(
+const driver = neo4j.driver(
     "neo4j://471af878.production-orch-0055.neo4j.io:7687", 
     neo4j.auth.basic("neo4j", "QTxR81zH_zOB-o0_u1kd6xizciwtSHJXYy1lVa9o8-k"), { encrypted: 'ENCRYPTION_ON' }
     )
-*/
-const driver = neo4j.driver(
+
+/*const driver = neo4j.driver(
     "bolt://localhost:7687", 
     neo4j.auth.basic("neo4j", "admin123")
     )
+    */
 const session = driver.session()
 
 app.get('/list', async (req,res) => {
     session
     .run(
-        'MATCH (n:Task) RETURN n.name',
+        'MATCH (n:Task) RETURN n',
       )
     .then(result => {
+        let name = result.records
         res.json({status: 200, data: {result}})
     })  
 })
@@ -48,6 +50,5 @@ app.get('/parkings/:id', (req,res) => {
     res.status(200).json(parking)
 })
 */
-driver.close()
 
 app.listen(4400);
